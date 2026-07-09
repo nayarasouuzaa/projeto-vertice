@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto Vértice</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        /* Cores personalizadas do Projeto Vértice */
+        :root {
+            --cherry: #7A1C2C;
+            --creme: #FDFBF7;
+            --terra: #4A2E2B;
+        }
+        .bg-v-creme { background-color: var(--creme); }
+        .text-v-cherry { color: var(--cherry); }
+        .bg-v-cherry { background-color: var(--cherry); }
+        .text-v-terra { color: var(--terra); }
+        .border-v-cherry { border-color: var(--cherry); }
+    </style>
+</head>
+<body class="bg-v-creme text-v-terra min-h-screen flex flex-col font-sans">
+
+    <!-- Banner de Fachada das Montanhas (Limpo e Corrigido) -->
+    <header class="w-full overflow-hidden" style="background-image: url('{{ url_for('static', filename='banner_limpo.png') }}'); background-size: cover; background-position: center; height: 200px;">
+    </header>
+
+    <!-- Área do Menu de Abas (Abaixo do Banner) -->
+    <section class="bg-v-creme py-8 px-6 flex-grow">
+        <div class="max-w-5xl mx-auto">
+            
+            <!-- Container das Abas de Comprido -->
+            <div class="flex justify-center items-center gap-6 border-b border-stone-200 pb-6 mb-8">
+                <button onclick="openTab('comunidade')" class="tab-btn group flex flex-col items-center gap-1 cursor-pointer focus:outline-none">
+                    <span id="btn-comunidade" class="px-8 py-2 rounded-full font-bold text-sm uppercase tracking-widest transition-all">
+                        Comunidade
+                    </span>
+                </button>
+                
+                <button onclick="openTab('esportes')" class="tab-btn group flex flex-col items-center gap-1 cursor-pointer focus:outline-none">
+                    <span id="btn-esportes" class="px-8 py-2 rounded-full font-bold text-sm uppercase tracking-widest transition-all">
+                        Esportes
+                    </span>
+                </button>
+                
+                <button onclick="openTab('agenda')" class="tab-btn group flex flex-col items-center gap-1 cursor-pointer focus:outline-none">
+                    <span id="btn-agenda" class="px-8 py-2 rounded-full font-bold text-sm uppercase tracking-widest transition-all">
+                        Agenda
+                    </span>
+                </button>
+            </div>
+
+            <!-- CONTEÚDO DAS ABAS -->
+
+            <!-- Aba 1: Comunidade (Feedbacks) -->
+            <div id="comunidade" class="tab-content hidden animate-fade-in">
+                <h2 class="text-2xl font-bold text-v-cherry mb-4">Feedbacks da Comunidade</h2>
+                <p class="text-stone-600 mb-6">Veja o que a nossa comunidade ativa de aventureiros está dizendo sobre as últimas experiências reais em Santa Catarina.</p>
+                
+                <!-- Formulário de Feedback -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100 mb-6">
+                    <h3 class="font-bold text-lg mb-4 text-v-cherry">Compartilhe sua aventura</h3>
+                    <form action="/comunidade/postar" method="POST" class="flex flex-col gap-4">
+                        <input type="text" name="usuario" placeholder="Seu nome ou @usuario" class="p-3 bg-stone-50 rounded-xl border border-stone-200 focus:outline-v-cherry" required>
+                        <textarea name="conteudo" rows="3" placeholder="Como foi sua experiência de esporte radical? Conte para a comunidade..." class="p-3 bg-stone-50 rounded-xl border border-stone-200 focus:outline-v-cherry" required></textarea>
+                        <button type="submit" class="bg-v-cherry text-white font-bold py-3 px-6 rounded-xl self-end hover:opacity-90 transition-all cursor-pointer">Postar Relato</button>
+                    </form>
+                </div>
+
+                <!-- Feed de Mensagens (Virá do Banco de Dados) -->
+                <div class="flex flex-col gap-4">
+                    {% if posts %}
+                        {% for post in posts %}
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-stone-100">
+                            <span class="font-bold text-v-cherry block mb-1">{{ post.usuario }}</span>
+                            <p class="text-stone-700 text-sm leading-relaxed">{{ post.conteudo }}</p>
+                            <span class="text-xs text-stone-400 block mt-2">{{ post.data.strftime('%d/%m/%Y %H:%M') }}</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-stone-400 text-center py-8">Nenhum feedback postado ainda. Seja o primeiro!</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Aba 2: Esportes (Curadoria/Lista) -->
+            <div id="esportes" class="tab-content hidden">
+                <h2 class="text-2xl font-bold text-v-cherry mb-4">Modalidades e Operadoras</h2>
+                <p class="text-stone-600 mb-6">Explore as melhores atividades outdoor curadas e certificadas na região.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Card Exemplo 1 -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+                        <div class="p-6">
+                            <span class="text-xs font-bold uppercase tracking-wider text-v-cherry bg-amber-50 px-3 py-1 rounded-full">Paraquedismo</span>
+                            <h3 class="text-xl font-bold mt-3 text-v-terra">Salto Duplo em Floripa</h3>
+                            <p class="text-stone-600 text-sm mt-2">Sinta a adrenalina da queda livre com a vista mais linda do litoral catarinense.</p>
+                        </div>
+                    </div>
+                    <!-- Card Exemplo 2 -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+                        <div class="p-6">
+                            <span class="text-xs font-bold uppercase tracking-wider text-v-cherry bg-blue-50 px-3 py-1 rounded-full">Rafting</span>
+                            <h3 class="text-xl font-bold mt-3 text-v-terra">Corredeiras de Santo Amaro</h3>
+                            <p class="text-stone-600 text-sm mt-2">Desça os rios mais emocionantes da região com segurança e instrutores experientes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba 3: Agenda (Checklist Útil) -->
+            <div id="agenda" class="tab-content hidden">
+                <h2 class="text-2xl font-bold text-v-cherry mb-4">Sua Agenda Inteligente</h2>
+                <p class="text-stone-600 mb-6">A ferramenta indispensável para organizar e mitigar a ansiedade pré-aventura.</p>
+                
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-stone-100 max-w-xl">
+                    <h3 class="font-bold text-lg text-v-terra mb-4 flex items-center gap-2">
+                        📋 Checklist de Preparação
+                    </h3>
+                    <div class="flex flex-col gap-3">
+                        <label class="flex items-center gap-3 text-stone-700 text-sm cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 accent-red-800"> Verificar previsão do tempo integrada
+                        </label>
+                        <label class="flex items-center gap-3 text-stone-700 text-sm cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 accent-red-800"> Roupas leves e calçado fechado adequado
+                        </label>
+                        <label class="flex items-center gap-3 text-stone-700 text-sm cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 accent-red-800"> Documento de identificação com foto
+                        </label>
+                        <label class="flex items-center gap-3 text-stone-700 text-sm cursor-pointer">
+                            <input type="checkbox" class="w-4 h-4 accent-red-800"> Confirmar horário do agendamento com a operadora
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Script de Alternância das Abas -->
+    <script>
+        function openTab(tabName) {
+            // Esconde todos os conteúdos de aba
+            const contents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < contents.length; i++) {
+                contents[i].classList.add("hidden");
+            }
+
+            // Reseta o estilo de todos os botões de aba
+            const buttons = document.querySelectorAll(".tab-btn span");
+            buttons.forEach(btn => {
+                btn.classList.remove("bg-v-cherry", "text-white");
+                btn.classList.add("text-v-terra");
+            });
+
+            // Mostra a aba clicada
+            document.getElementById(tabName).classList.remove("hidden");
+
+            // Destaca o botão selecionado
+            const activeBtn = document.getElementById("btn-" + tabName);
+            if (activeBtn) {
+                activeBtn.classList.remove("text-v-terra");
+                activeBtn.classList.add("bg-v-cherry", "text-white");
+            }
+        }
+
+        // Abre a aba Comunidade por padrão ao carregar a página
+        document.addEventListener("DOMContentLoaded", () => {
+            openTab('comunidade');
+        });
+    </script>
+</body>
+</html>
